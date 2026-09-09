@@ -1,6 +1,11 @@
 name: deploy-readonly
 on:
   workflow_dispatch:
+    inputs:
+      allow_rung4:
+        description: Only after RUNG 3 PASS. Deploy CONNECTED_READ_ONLY.
+        type: boolean
+        default: false
 permissions:
   contents: read
   id-token: write
@@ -13,6 +18,7 @@ jobs:
       SERVICE: ketabebozorg-orchestrator
       EXPECT_SHA: daede0951db98e8442bb44e43eae64c1bf1e237082dec7cd51140129b05b87f2
       EXPECT_BYTES: "76877"
+      SA: ketabebozorg-runner@ketabebozorg-orchestrator.iam.gserviceaccount.com
     steps:
       - uses: actions/checkout@v4
       - name: require frozen zip
@@ -54,7 +60,17 @@ jobs:
           workload_identity_provider: ${{ vars.WIF_PROVIDER }}
           service_account: ketabebozorg-runner@ketabebozorg-orchestrator.iam.gserviceaccount.com
       - uses: google-github-actions/setup-gcloud@v2
+      - name: prove SA impersonation
+        run: |
+          set -euo pipefail
+          gcloud config set project "$PROJECT_ID"
+          ACC="$(gcloud config get-value account 2>/dev/null || true)"
+          echo "authenticated_account=$ACC"
+          test "$ACC" = "$SA"
+          echo "RUNG3_AUTH_PASS"
+          echo "Configuration-complete is not PASS. This step is the live OIDC→STS→impersonation proof."
       - name: deploy CONNECTED_READ_ONLY private
+        if: ${{ inputs.allow_rung4 }}
         run: |
           set -euo pipefail
           test -n "${SRC_DIR:-}"
@@ -63,8 +79,9 @@ jobs:
           gcloud run deploy "$SERVICE" \
             --source "$SRC_DIR" \
             --region "$REGION" \
-            --service-account ketabebozorg-runner@${PROJECT_ID}.iam.gserviceaccount.com \
+            --service-account "$SA" \
             --no-allow-unauthenticated \
             --set-env-vars ORCHESTRATOR_MODE=CONNECTED_READ_ONLY,EXECUTION_MODE=CONNECTED_READ_ONLY \
             --quiet
           gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)'
+          echo "Cloud Run URL is not Drive proof. /health is authenticated-only."
