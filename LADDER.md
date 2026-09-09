@@ -1,23 +1,24 @@
 KETABEBOZORG official program ladder 2026-09-10
-Authority: CE-C0 canonical reassessment.
-Book lane separate. REV7 UNCHANGED. I9/Q10 HOLD.
+Seal: CE-C0_RUNG3_PROCEDURE_CORRECTED_2026-09-10
+Replaces prior Rung-4 role-assignment guesses.
+Book lane separate. REV7 UNCHANGED.
 
-CURRENT VERIFIED STATE
 Rung 1   Drive Lite                  DONE
 Rung 2A  Frozen ZIP / Drive          DONE
 Rung 2B  Exact bytes → runner        DONE — DO NOT REOPEN
 Rung 3   WIF / GCP identity          OPEN
 Rung 3 CONFIGURED                    NO
 Rung 3 PASS                          NO
-Rung 4   Cloud Run READ_ONLY         WAITING FOR RUNG 3 / NOT STARTED
+Rung 4   Cloud Run READ_ONLY         WAITING FOR RUNG 3
 GitHub OIDC capability               READY
 Live OIDC token                      NOT YET OBSERVED
-WIF_PROVIDER                         UNSET
-GCP WIF pool                         UNKNOWN
-GCP WIF provider                     UNKNOWN
-Repository restriction               UNKNOWN
+GCP project access                   NOT VERIFIED
+github-pool                          UNKNOWN
+github-provider                      UNKNOWN
+Provider admission condition         UNKNOWN
+Repository-scoped IAM binding        UNKNOWN
 Service account                      UNKNOWN
-WorkloadIdentityUser binding         UNKNOWN
+WIF_PROVIDER                         UNSET
 Cloud Run URL                        NONE VERIFIED
 /health                              NOT TESTED
 Runtime identity                     NOT VERIFIED
@@ -26,25 +27,19 @@ WRITE                                OFF
 Scheduler                            OFF
 REV7                                 UNCHANGED
 
-CONFIRMED ERRORS ONLY
-1. CLOUD_ACCESS_BLOCKED — Cloud Browser never reached Console or login.
-   No GCP inspection or mutation. Not WIF_FAILED. WIF was never reached.
-2. WIF_PROVIDER UNSET — fail-closes before authentication.
-   Expected: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+CONFIRMED 1: CLOUD_ACCESS_BLOCKED — not WIF_FAILED. All GCP items stay UNKNOWN until live-read.
+CONFIRMED 2: WIF_PROVIDER UNSET — full name with numeric PROJECT_NUMBER required.
 
-POSSIBLE Rung 3 until live GCP evidence: wrong account, project state, IAM authority,
-identity APIs, missing/wrong pool or provider, issuer, mapping, admission condition,
-principalSet, disabled SA, org policy, Actions policy, variable location/value,
-IAM delay, token exchange mismatch.
-POSSIBLE Rung 4 only after PASS: Run/Build/AR APIs and roles, region, billing,
-source build, startup, private 401/403, revision/traffic, runtime SA, Drive share,
-accidental WRITE, stale Scheduler/services.
+TWO LAYERS: provider admission on bengnjk-byte/ketabebozorg-cloudshell AND repo-scoped WorkloadIdentityUser.
+CONFIGURED ≠ PASS. First identity test = rung3-auth. deploy-readonly is Rung 4 after PASS.
 
-2B remains CLOSED. Do not change 2B because Rung 3 is unresolved.
-First identity test: workflow rung3-auth. deploy-readonly is Rung 4.
-Keep auth@v2. No JSON key. No public service. No pool-wide trust.
+RUNG 4 ROLES — NOT GUESSED ONTO RUNTIME SA
+Deployer = identity the workflow impersonates after WIF.
+On deployer (after live doc confirmation): run.sourceDeveloper, serviceUsageConsumer.
+roles/iam.serviceAccountUser: TO deployer, ON runtime Cloud Run service identity.
+Build SA: live-identify first. Default in current Google source-deploy docs is Compute Engine default SA unless overridden; that identity needs run.builder. Identify → verify used → then grant/verify.
 
-Recovery: ACCESS → PROJECT → IAM AUTHORITY → APIs → POOL → PROVIDER → MAPPING → PROVIDER CONDITION → SERVICE ACCOUNT → REPO-SCOPED IAM → WIF_PROVIDER → AUTH TEST → RUNG 3 PASS → CLOUD RUN → HEALTH → DRIVE
-First unresolved external dependency: authenticated GCP control-plane access.
-Do not dispatch while WIF_PROVIDER is UNSET.
-Do not invent SERVICE_URL. Do not open WRITE, Scheduler, I9, Q10. Do not reopen 2B.
+DO NOT REOPEN 2B
+DO NOT DISPATCH UNTIL RUNG 3 CONFIGURATION IS COMPLETE
+DO NOT CALL RUNG 3 PASS UNTIL LIVE OIDC→STS→SA IMPERSONATION PASSES
+DO NOT MIX RUNG 4 BUILD/DEPLOY FAILURES WITH RUNG 3 IDENTITY
