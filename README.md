@@ -1,8 +1,7 @@
-KETABEBOZORG V6 Cloud Shell helper. No secrets.
+KETABEBOZORG V6 Cloud helper. No secrets.
 
-Live now: Drive lite automation.
-2A DONE: frozen ZIP on Drive, SHA verified.
-2B DONE: V6.zip.b64 in this repo. Workflow decodes and checks exact SHA.
-3 OPEN: WIF/GCP trust. Do not Run until WIF_PROVIDER is set.
-The checked-in ketabebozorg_orchestrator tree is not frozen V6.
-See LADDER.md. Do not skip to CONTROLLED_WRITE.
+2B is DONE. DO NOT REOPEN the Base64 carrier.
+Cloud target now: WIF / GCP identity only.
+Do not Run until WIF_PROVIDER is set.
+WRITE OFF. Scheduler OFF. No Cloud Run URL.
+Book lane separate. See LADDER.md.
