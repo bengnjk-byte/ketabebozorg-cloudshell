@@ -1,0 +1,9 @@
+{
+  "command_bus_folder_id": "1RCbwI3VlXEYaPCfeLeLCUTE0hEoV16si",
+  "orchestrator_control_folder_id": "1OCu1wLOeu7KB2peksX-MXsLQGBqon8bo",
+  "master_state_machine_doc_id": "1_fNS6aRK4Dsud2D5oN5c_-ljehffZjaHxoRu_8z8pvg",
+  "result_bus_protocol_doc_id": "1ECDEpaIj_QBhbi55os5NrWD_Xy6QxeNA6V8CF90cpmw",
+  "result_bus_append_log_doc_id": "1mTXSNBQ2U1DXS2tAd7Hvd3M8cQ9aMYJuoM6u8eS8vuU",
+  "orchestrator_protocol_doc_id": "1UAnVHAHgUYxi4vEeZJ7OhW-fIxmXHBAkK1nIxJa7sM0",
+  "rev7_mode": "READ_ONLY"
+}

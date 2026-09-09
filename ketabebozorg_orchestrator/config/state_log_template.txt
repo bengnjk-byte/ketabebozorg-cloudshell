@@ -1,0 +1,3 @@
+STATUS: ACTIVE_APPEND_ONLY_STATE_LOG
+FORMAT: one STATE_JSON record per line; latest record for the same task_id is current.
+STATE_RECORDS_BEGIN
