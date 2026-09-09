@@ -2,8 +2,8 @@
 set -euo pipefail
 PROJECT=ketabebozorg-orchestrator
 REGION=australia-southeast1
-ZIP_ID=1GupyL9uHyRpoT1IjK9i9nYWxj4jhfUPk
 EXPECT=daede0951db98e8442bb44e43eae64c1bf1e237082dec7cd51140129b05b87f2
+GH_ZIP=https://raw.githubusercontent.com/bengnjk-byte/ketabebozorg-cloudshell/main/KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
 OUT=/tmp/kbz_stage2_result.txt
 : > "$OUT"
 {
@@ -19,14 +19,11 @@ OUT=/tmp/kbz_stage2_result.txt
   gcloud secrets versions access latest --secret=OPENAI_API_KEY >/dev/null
   gcloud secrets versions access latest --secret=XAI_API_KEY >/dev/null
   echo "SECRETS=PRESENT"
-  TOKEN=$(gcloud auth print-access-token)
-  curl -fsSL -H "Authorization: Bearer $TOKEN" \
-    "https://www.googleapis.com/drive/v3/files/${ZIP_ID}?alt=media" \
-    -o /tmp/KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
+  curl -fsSL "$GH_ZIP" -o /tmp/KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
   SHA=$(sha256sum /tmp/KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip | awk '{print $1}')
   echo "SHA=${SHA}"
   if [[ "$SHA" != "$EXPECT" ]]; then
-    echo "STATUS=SHA_MISMATCH"
+    echo "STATUS=SHA_MISMATCH_OR_ZIP_MISSING_ON_GITHUB"
     exit 3
   fi
   rm -rf /tmp/kbz-v6 && mkdir /tmp/kbz-v6
