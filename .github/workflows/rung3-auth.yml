@@ -1,0 +1,39 @@
+name: rung3-auth
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  auth:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_ID: ketabebozorg-orchestrator
+      SA: ketabebozorg-runner@ketabebozorg-orchestrator.iam.gserviceaccount.com
+    steps:
+      - uses: actions/checkout@v4
+      - name: require WIF variable
+        run: |
+          test -n "${{ vars.WIF_PROVIDER }}" || { echo "WIF_PROVIDER unset — rung 3 OPEN"; exit 1; }
+      - name: refuse write mode in this workflow
+        run: |
+          if echo "$EXECUTION_MODE$ORCHESTRATOR_MODE" | grep -Eq 'WRITE|SCHEDULER|PRODUCTION'; then
+            echo "WRITE/Scheduler/Production forbidden in rung3-auth"
+            exit 1
+          fi
+      - name: auth WIF
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ketabebozorg-runner@ketabebozorg-orchestrator.iam.gserviceaccount.com
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: prove SA impersonation
+        run: |
+          set -euo pipefail
+          gcloud config set project "$PROJECT_ID"
+          ACC="$(gcloud config get-value account 2>/dev/null || true)"
+          echo "authenticated_account=$ACC"
+          test "$ACC" = "$SA"
+          echo "RUNG3_AUTH_PASS"
+          echo "CONFIGURED is not PASS. This job is the live OIDC→STS→impersonation proof."
+          echo "Do not classify this as Cloud Run, Cloud Build, or Drive."

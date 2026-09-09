@@ -1,54 +1,34 @@
-KETABEBOZORG · RUNG 3 PROCEDURE (CORRECTED)
+KETABEBOZORG · RUNG 3 CANONICAL
 DATE: 2026-09-10
-MODE AFTER BIND: CONNECTED_READ_ONLY ONLY
-DO NOT: JSON key, WRITE, Scheduler, I9, Q10, REV7 mutation
-DO NOT: treat helper subtree as frozen V6
-DO NOT: invent SERVICE_URL
-DO NOT: call configuration-complete RUNG 3 PASS
-DO NOT: mix Cloud Build / Artifact Registry failures with WIF failures
-KEEP: google-github-actions/auth@v2 until live evidence requires otherwise
+2B DONE — DO NOT REOPEN
+WRITE OFF. Scheduler OFF. REV7 UNCHANGED.
+KEEP auth@v2 until live evidence requires otherwise.
+NO JSON key. NO public Cloud Run. NO pool-wide trust. NO Owner/Editor.
 
-TWO-LAYER REPOSITORY RESTRICTION (required)
-  1) Provider admission condition
-     assertion.repository == 'bengnjk-byte/ketabebozorg-cloudshell'
-  2) Service-account IAM
-     roles/iam.workloadIdentityUser
-     only for that repository principalSet
-Do not rely on IAM alone. Google WIF guidance requires the provider condition.
+CONFIRMED ONLY
+1. Work Cloud Browser did not reach Google Cloud Console — CLOUD_ACCESS_BLOCKED, not WIF_FAILED.
+2. WIF_PROVIDER is UNSET. Workflow fail-closes before auth even if GCP WIF already existed.
 
-SAFER SEQUENCE
-1  Open project ketabebozorg-orchestrator
-2  Verify the signed-in account can manage Workload Identity Pools and SA IAM
-   (opening the project is not enough)
-3  Verify/enable APIs: iam, iamcredentials, sts, plus cloudresourcemanager
-4  Verify/create github-pool
-5  Verify/create github-provider
-6  Map:
-     google.subject=assertion.sub
-     attribute.repository=assertion.repository
-7  Add provider condition restricting admission to:
-     bengnjk-byte/ketabebozorg-cloudshell
-8  Verify ketabebozorg-runner@ketabebozorg-orchestrator.iam.gserviceaccount.com
-   exists and is enabled BEFORE binding
-9  Bind roles/iam.workloadIdentityUser only to the repo-scoped principalSet
-10 Obtain full provider resource name using PROJECT_NUMBER, not project ID:
-     projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/providers/github-provider
-11 Set GitHub Actions repository variable WIF_PROVIDER to that name
-   This chat may not be able to write GitHub variables; set manually if needed
-12 Re-read all configuration
-13 Controlled deploy-readonly run ONCE with allow_rung4=false
-14 Prove OIDC request → Google STS → provider condition → SA impersonation
-15 RUNG 3 = PASS only after step 14
-   After 10–11 only: RUNG 3 CONFIGURED
-16 Only then allow Rung 4 CONNECTED_READ_ONLY (allow_rung4=true)
+All pool/provider/SA/IAM/API/org-policy items are POSSIBLE until live GCP evidence.
+Cloud Run / Cloud Build / Artifact Registry / /health / Drive are Rung 4.
 
-RUNG 4 (not Rung 3)
-Cloud Run deploy --source needs Cloud Build, Artifact Registry, and extra IAM.
-Those failures are not WIF failures.
-Private /health needs authenticated invocation.
-Cloud Run success is not Drive-read proof.
+GitHub OIDC capability = READY. Live token = NOT YET OBSERVED.
+Expected WIF_PROVIDER (project NUMBER, not ID):
+  projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+This chat may 403 on GitHub variable write. Set WIF_PROVIDER manually if needed.
 
-OIDC JWT is short-lived (~5 min). Do not pause between issuance and Google auth.
+TWO LAYERS, both required:
+  Provider condition: assertion.repository == 'bengnjk-byte/ketabebozorg-cloudshell'
+  AND roles/iam.workloadIdentityUser on repo-scoped principalSet only.
 
-2B DONE. Do not reopen.
-WRITE OFF. Scheduler OFF.
+CONFIGURED = pool+provider+issuer+mapping+condition+SA enabled+binding+WIF_PROVIDER set.
+PASS = live rung3-auth proves OIDC request, STS, provider admission, repo restriction, SA impersonation.
+CONFIGURED != PASS.
+
+First identity test = workflow rung3-auth (not deploy-readonly).
+Only after RUNG 3 PASS: deploy-readonly for Rung 4.
+Classify failures by exact step. Do not mix identity with Build/Run/Drive.
+
+Recovery order: ACCESS → PROJECT → IAM AUTHORITY → APIs → POOL → PROVIDER → MAPPING → PROVIDER CONDITION → SERVICE ACCOUNT → REPO-SCOPED IAM → WIF_PROVIDER → AUTH TEST → RUNG 3 PASS → CLOUD RUN → HEALTH → DRIVE
+Do not try to fix every possible issue at once.
+First unresolved external dependency: authenticated GCP control-plane access.
