@@ -9,21 +9,34 @@ Book lane separate. REV7 READ_ONLY. I9/Q10 HOLD.
 2B DONE Exact bytes → runner via V6.zip.b64
      DO NOT REOPEN
 
+## Activation gate
+Cloud stays off until Rung 3 closes.
+This chat has no control-plane access to GCP, so it cannot create
+pool/provider or IAM binding. It will not dispatch GitHub while
+WIF_PROVIDER is UNSET (that run is designed to fail-close).
+
+Next step, only, in an accessible Google Cloud Console / Work Cloud Browser:
+  github-pool
+  + github-provider
+  + repository restriction on bengnjk-byte/ketabebozorg-cloudshell
+  + roles/iam.workloadIdentityUser
+  + set WIF_PROVIDER (full resource name, numeric project number)
+
+After RUNG 3 = PASS: Cloud Run CONNECTED_READ_ONLY only.
+WRITE stays OFF. Scheduler stays OFF.
+
 GitHub OIDC capability     READY
 Live OIDC token            NOT YET REQUESTED/OBSERVED
-The token is not generated in the repository now.
-It is only requested when a job actually runs.
-Exact sub / event_name / actor are not facts until a live job.
-Issuer when requested: https://token.actions.githubusercontent.com
-Repo: bengnjk-byte/ketabebozorg-cloudshell
-id-token: write PRESENT. Auth action PRESENT.
+GCP WIF trust              NOT VERIFIED
+WIF_PROVIDER               UNSET
+Cloud Run                  NOT STARTED
 
 ## Rung 3 gate table
 
 | مؤلفه | وضعیت فعلی | شواهد / توضیح | شرط PASS |
 |---|---|---|---|
 | GitHub OIDC permission | READY | `id-token: write` در workflow موجود است | بدون تغییر |
-| GitHub OIDC token | NOT YET OBSERVED | فقط هنگام اجرای واقعی job درخواست می‌شود | controlled run توکن را با موفقیت درخواست کند |
+| GitHub OIDC token | NOT YET OBSERVED | فقط هنگام جریان واقعی job درخواست می‌شود | controlled run توکن را با موفقیت درخواست کند |
 | Repository identity | KNOWN | `bengnjk-byte/ketabebozorg-cloudshell` | provider دقیقاً همین repo را بپذیرد |
 | WIF pool `github-pool` | UNKNOWN | هنوز GCP live-read نداریم | وجود + enabled بودن تأیید شود |
 | WIF provider `github-provider` | UNKNOWN | هنوز GCP live-read نداریم | وجود + enabled بودن تأیید شود |
