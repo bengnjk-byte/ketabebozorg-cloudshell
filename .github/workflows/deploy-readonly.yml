@@ -1,0 +1,42 @@
+name: deploy-readonly
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ketabebozorg_orchestrator/**"
+      - "KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip"
+      - ".github/workflows/deploy-readonly.yml"
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_ID: ketabebozorg-orchestrator
+      REGION: australia-southeast1
+      SERVICE: ketabebozorg-orchestrator
+      EXPECT_SHA: daede0951db98e8442bb44e43eae64c1bf1e237082dec7cd51140129b05b87f2
+    steps:
+      - uses: actions/checkout@v4
+      - name: require frozen zip
+        run: |
+          test -f KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
+          echo "$EXPECT_SHA  KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip" | sha256sum -c
+      - name: auth WIF
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ketabebozorg-runner@ketabebozorg-orchestrator.iam.gserviceaccount.com
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: deploy CONNECTED_READ_ONLY
+        run: |
+          unzip -o KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
+          gcloud config set project "$PROJECT_ID"
+          gcloud run deploy "$SERVICE" \
+            --source ketabebozorg_orchestrator \
+            --region "$REGION" \
+            --service-account ketabebozorg-runner@${PROJECT_ID}.iam.gserviceaccount.com \
+            --set-env-vars EXECUTION_MODE=CONNECTED_READ_ONLY \
+            --quiet
+          gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)'
