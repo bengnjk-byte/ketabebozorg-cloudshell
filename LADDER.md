@@ -1,5 +1,5 @@
 KETABEBOZORG official program ladder 2026-09-10
-Authority: CE-C0 Drive seal, confirmed live.
+Authority: CE-C0 live attempt.
 Book lane separate. REV7 READ_ONLY. I9/Q10 HOLD.
 
 1 DONE Drive Lite
@@ -9,11 +9,17 @@ Book lane separate. REV7 READ_ONLY. I9/Q10 HOLD.
      Drive 1oe7AE_PD0WvbcMh8qUjS9YbWRUj7qwlk
 2B DONE Exact bytes → runner via V6.zip.b64
      DO NOT REOPEN
-     DO NOT re-investigate, repair, or replace the carrier
-     Workflow reconstructs ZIP in $RUNNER_TEMP and deploys that extract only.
-     Checkout helper subtree is forbidden as deploy source.
-3 OPEN WIF / GCP identity — ONLY CLOUD BLOCKER
-4 WAITING FOR 3 Cloud Run READ_ONLY
+3 FAIL_CLOSED WIF / GCP identity
+     CODE: CLOUD_BROWSER_GCP_ACCESS_BLOCKED
+     Google login page never opened. Page.navigate timed out.
+     Browser recovery: refresh tabs timed out after 20000ms.
+     WIF pool/provider NOT VERIFIED
+     Repository restriction NOT VERIFIED
+     workloadIdentityUser binding NOT VERIFIED
+     GitHub WIF_PROVIDER NOT VERIFIED
+     GitHub → GCP impersonation NOT TESTED
+     IAM / GitHub variables / Cloud Run / book files UNCHANGED
+4 CLOSED until 3 proven  Cloud Run READ_ONLY
 5 NOT_STARTED real Cloud Run URL
 6 NOT_STARTED /health + service identity
 7 NOT_STARTED live Drive read/state
@@ -30,8 +36,9 @@ Cloud Run URL NONE
 Book (separate, not attached):
 BOUND 0/8  ABSENT 0/8  UNRESOLVED 8/8
 C-family CLOSED
-V14 bodies if any → P8 queue only
 
-Do not Run deploy-readonly until WIF_PROVIDER exists.
+Do not Run deploy-readonly until WIF_PROVIDER is proven.
+Do not retry Cloud Console from this blocked browser path.
 Do not invent SERVICE_URL.
 Do not open WRITE, Scheduler, I9, or Q10.
+Do not reopen 2B.
