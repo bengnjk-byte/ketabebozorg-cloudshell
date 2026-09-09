@@ -21,13 +21,22 @@ jobs:
           base64 -d V6.zip.b64 > KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
           test "$(wc -c < KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip)" -eq "$EXPECT_BYTES"
           echo "$EXPECT_SHA  KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip" | sha256sum -c
+      - name: refuse write mode in this workflow
+        run: |
+          if echo "$EXECUTION_MODE$ORCHESTRATOR_MODE" | grep -Eq 'WRITE|SCHEDULER|PRODUCTION'; then
+            echo "WRITE/Scheduler/Production forbidden in deploy-readonly"
+            exit 1
+          fi
+      - name: require WIF variable
+        run: |
+          test -n "${{ vars.WIF_PROVIDER }}" || { echo "WIF_PROVIDER unset — rung 3 OPEN"; exit 1; }
       - name: auth WIF
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ vars.WIF_PROVIDER }}
           service_account: ketabebozorg-runner@ketabebozorg-orchestrator.iam.gserviceaccount.com
       - uses: google-github-actions/setup-gcloud@v2
-      - name: deploy CONNECTED_READ_ONLY
+      - name: deploy CONNECTED_READ_ONLY private
         run: |
           unzip -o KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
           gcloud config set project "$PROJECT_ID"
@@ -35,6 +44,7 @@ jobs:
             --source ketabebozorg_orchestrator \
             --region "$REGION" \
             --service-account ketabebozorg-runner@${PROJECT_ID}.iam.gserviceaccount.com \
+            --no-allow-unauthenticated \
             --set-env-vars ORCHESTRATOR_MODE=CONNECTED_READ_ONLY,EXECUTION_MODE=CONNECTED_READ_ONLY \
             --quiet
           gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)'
