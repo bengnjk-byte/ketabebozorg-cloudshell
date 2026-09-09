@@ -10,6 +10,8 @@ Book lane separate. REV7 READ_ONLY. I9/Q10 HOLD.
 2B DONE Exact bytes → runner via V6.zip.b64
      DO NOT REOPEN
      DO NOT re-investigate, repair, or replace the carrier
+     Workflow reconstructs ZIP in $RUNNER_TEMP and deploys that extract only.
+     Checkout helper subtree is forbidden as deploy source.
 3 OPEN WIF / GCP identity — ONLY CLOUD BLOCKER
 4 WAITING FOR 3 Cloud Run READ_ONLY
 5 NOT_STARTED real Cloud Run URL
