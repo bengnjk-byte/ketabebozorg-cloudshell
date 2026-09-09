@@ -1,0 +1,20 @@
+[project]
+name = "ketabebozorg-orchestrator"
+version = "0.6.0"
+description = "Fail-closed dual-model CE-C0 orchestration for KETABEBOZORG (V6 atomic commit fencing)"
+requires-python = ">=3.11"
+dependencies = [
+  "openai>=1.0.0",
+  "pydantic>=2.7",
+  "google-api-python-client>=2.0",
+  "google-auth>=2.0",
+  "google-cloud-firestore>=2.16",
+  "flask>=3.0",
+  "gunicorn>=22.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
