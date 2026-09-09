@@ -14,12 +14,10 @@ jobs:
       EXPECT_SHA: daede0951db98e8442bb44e43eae64c1bf1e237082dec7cd51140129b05b87f2
     steps:
       - uses: actions/checkout@v4
-      - name: require frozen V6 tree
+      - name: require frozen zip
         run: |
-          test -f ketabebozorg_orchestrator/main.py
-          test -f ketabebozorg_orchestrator/orchestrator/engine.py
-          test -f ketabebozorg_orchestrator/orchestrator/store.py
-          echo "FROZEN_ZIP_SHA256=$EXPECT_SHA"
+          test -f KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
+          echo "$EXPECT_SHA  KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip" | sha256sum -c
       - name: auth WIF
         uses: google-github-actions/auth@v2
         with:
@@ -28,11 +26,12 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
       - name: deploy CONNECTED_READ_ONLY
         run: |
+          unzip -o KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
           gcloud config set project "$PROJECT_ID"
           gcloud run deploy "$SERVICE" \
             --source ketabebozorg_orchestrator \
             --region "$REGION" \
             --service-account ketabebozorg-runner@${PROJECT_ID}.iam.gserviceaccount.com \
-            --set-env-vars EXECUTION_MODE=CONNECTED_READ_ONLY \
+            --set-env-vars ORCHESTRATOR_MODE=CONNECTED_READ_ONLY,EXECUTION_MODE=CONNECTED_READ_ONLY \
             --quiet
           gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)'

@@ -1,8 +1,20 @@
 KETABEBOZORG official program ladder 2026-09-10
+Authority: CE-C0 live correction CE-C0_PROGRAM_LADDER_STAGE2_GITHUB_RUNNER_GAP_2026-09-10
+Drive ID: 1WZ4rOrCUmcy0IQ7RSnZ0pfB012_CZrG1c5cYlWlZtZU
+Book lane separate. REV7 READ_ONLY. I9/Q10 HOLD.
 
 1 DONE Drive lite automation live
-2 DONE exact V6 package available SHA-256 daede0951db98e8442bb44e43eae64c1bf1e237082dec7cd51140129b05b87f2
-3 BLOCKED GCP authenticated session — not present in Grok worker
+2A DONE frozen V6 exact bytes on Drive
+     file KETABEBOZORG_DUAL_ORCHESTRATOR_V6.zip
+     Drive 1oe7AE_PD0WvbcMh8qUjS9YbWRUj7qwlk
+     76877 bytes
+     SHA-256 daede0951db98e8442bb44e43eae64c1bf1e237082dec7cd51140129b05b87f2
+2B OPEN exact V6 visible to GitHub runner
+     ZIP not in repo root
+     helper subtree is not frozen V6
+     live proof: Actions run 34376855781 failed at require frozen zip;
+     WIF auth, setup-gcloud, and deploy SKIPPED
+3 OPEN GCP / WIF authenticated trust — identity-bound
 4 NOT_STARTED deploy CONNECTED_READ_ONLY
 5 NOT_STARTED real Cloud Run URL
 6 NOT_STARTED /health + service identity PASS
@@ -15,4 +27,12 @@ KETABEBOZORG official program ladder 2026-09-10
 13 NOT_STARTED disable redundant loops
 14 NOT_STARTED FULL AUTONOMOUS PRODUCTION
 
-Do not skip 3-6. Do not invent SERVICE_URL. I9/Q10 are not rungs on this ladder.
+CONTROLLED_WRITE OFF
+Scheduler OFF
+SERVICE_URL NONE
+
+Do not deploy helper subtree as V6.
+Do not invent SERVICE_URL.
+Artifact transfer to the runner is automation, not Ben.
+Only WIF/GCP is inherently identity-bound.
+Do not skip 2B-6. Do not open WRITE, Scheduler, I9, or Q10.
